@@ -4,6 +4,7 @@ install.packages("choroplethr")
 install.packages("dplyr")
 install.packages("choroplethrMaps")
 install.packages("ggplot2")
+install.packages("hexbin")
 
 library(plyr)
 library(choroplethr)
@@ -12,7 +13,7 @@ library(readr)
 library(data.table)
 library(choroplethrMaps)
 library(ggplot2)
-
+library(hexbin)
 
 ##### Download data
 dest = "https://www.fhwa.dot.gov/bridge/nbi/2016/delimited/AK16.txt"
@@ -43,11 +44,11 @@ min2dec = function(x){
   as.numeric(substr(x,1,n-6)) + as.numeric(substr(x,n-5,n))/6e+05 %>% return
 }
 M = mutate(M,lat = min2dec(LAT_016), lon = -min2dec(LONG_017))
-ggplot(data = M) + geom_point(mapping = aes(y = lat, x = lon))
+ggplot(data = M) + geom_hex(mapping = aes(y = lat, x = lon))
 M = M %>% filter(lon>-150,lat<50,lat>24.5)
-ggplot(data = M) + geom_point(mapping = aes(y = lat, x = lon))
+ggplot(data = M) + geom_hex(mapping = aes(y = lat, x = lon))
 M = M %>% filter(lon< -50)
-
+ggplot(data = M) + geom_hex(mapping = aes(y = lat, x = lon)) + coord_equal()
 ####Visualization
 pdf("USbridge.pdf",family="GB1")
 M %>% filter(YEAR_BUILT_027>1900) %>%
